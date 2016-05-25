@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+
+require 'libnotify'
+require 'optparse'
+
+class NetworkDevices
+	attr_reader :ip_dn
+	def initialize (ip)
+		@ip = ip
+		@ip_dn = @ip.split(".").at(3).to_i
+	end
+	def inspect
+		@ip
+	end
+	def value
+		@ip_dn
+	end
+	def <=> (other)
+		@ip_dn	<=> other.ip_dn
+	end
+end
+module Notification
+	def self.send (new_fags,timeout=50.5)
+		#text = new_fags.join(" and ")
+		text = ""
+		#new_fags.shift
+		new_fags.each do |d|
+			text+="#{d.inspect}  "
+		end
+		notification = Libnotify.new do |notify|
+			notify.summary    = "Network Watcher"
+	  		notify.body       = text 
+			notify.timeout    = timeout
+			notify.urgency    = :critical
+			notify.append     = false
+			notify.transient  = true
+		end
+		notification.show!
+	
+	end
+end
+module IPScanner
+	def self.network_devices(nd,ip_pattern)
+		(0..nd).each do |n|
+			ip = "#{ip_pattern}.#{n}"
+			output = `ping -c1 #{ip}`
+			data = output.split
+			#p data[12]
+			if data[12] != "Unreachable"
+				device_raw_ip = data[1]
+				if device_raw_ip != nil
+					device = NetworkDevices.new(device_raw_ip)
+					yield device
+				end
+			end
+				#p n
+			end
+
+	end
+end
+
+class Scanner
+	@@default_nd_value = 254
+	def initialize (nd=@@default_nd_value)
+		@nd = nd
+		@ip_old_list = Array.new(@nd)
+		@ip_new_list = Array.new(@nd)
+		@ip_new_list.fill("")
+		@ip_old_list.fill("")
+	end
+
+	def scan(ip_pattern="192.168.1",time=300,timeout=50.5) 
+		#@ip_old_list ||= Array.new(@nd)
+		@ip_old_list = @ip_new_list.map(&:clone)	
+		@ip_new_list = Array.new(@nd)
+		@ip_new_list.fill("")
+		IPScanner.network_devices(@nd,ip_pattern) { |d|
+			@ip_new_list[d.value] = d 
+		}			#Get the new fags.
+		new_fags = []
+		(0..@nd).each do |n|	
+			if @ip_new_list[n] != "" and @ip_old_list[n] == ""
+				new_fags.push(@ip_new_list[n])
+			end
+		end
+			#p new_fags if !new_fags.empty? 
+		Notification.send(new_fags) if !new_fags.empty?
+	end
+end
+
+
+
+#Start the real shit 
+
+
+options = {:timeout => nil, :sleep => nil, :ippattern => nil,:devices => nil}
+
+parser = OptionParser.new do|opts|
+	opts.banner = "Usage: networkwatcherd [options]"
+	
+	opts.on('-t', '--timeout timeout', 'Notification timeout (Default 50 second)') do |timeout|
+		options[:timeout] = timeout;
+	end
+	opts.on('-d', '--number-of-devices devices', 'Number of addresses to ping (Default 254 )') do |devices|
+		options[:devices] = devices
+	end
+	opts.on('-s', '--sleep sleep', 'Time between each devices checking (Default 300 second)') do |sleep|
+		options[:sleep] = sleep;
+	end
+	
+	opts.on('-p', '--ip-pattern ippattern',' (Default 192.168.1)') do |ippattern|
+		options[:ippattern] = ippattern;
+	end
+
+	opts.on('-h', '--help', 'Displays Help') do
+		puts opts
+		exit
+	end
+end
+parser.parse!
+
+options[:timeout] ||= 50.5
+options[:sleep] ||= 300
+options[:ippattern] ||= "192.168.1"
+options[:devices] ||= 254 
+S = Scanner.new(options[:devices].to_i)
+while true 
+	S.scan options[:ippattern],options[:sleep],options[:timeout]
+end
+
