@@ -24,7 +24,7 @@ $ networkwatcherd -d 24 -t 10 &
 ```
 You can add it to your startup applications.
 
-### Creat the gem
+### Create the gem
 
 ```sh
 $ gem build networkwatcherd.gemspec
