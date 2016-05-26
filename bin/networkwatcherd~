@@ -2,7 +2,6 @@
 
 require 'optparse'
 require 'networkwatcherd'
-require 'networkwatcherd/version'
 #Start the real shit 
 
 
@@ -25,8 +24,8 @@ parser = OptionParser.new do|opts|
 		options[:ippattern] = ippattern;
 	end
 	opts.on('-v','--version','Current version') do
-		puts Networkwatcherd.VERSION
-		exit
+		#puts Networkwatcherd.VERSION
+		p "0.0.3"
 	end
 	opts.on('-h', '--help', 'Displays Help') do
 		puts opts
