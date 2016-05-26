@@ -2,7 +2,7 @@ require 'networkwatcherd/networkdevices'
 
 module IPScanner
 	def self.network_devices(nd,ip_pattern)
-		(0..nd).each do |n|
+		(1..nd).each do |n|
 			ip = "#{ip_pattern}.#{n}"
 			output = `ping -c1 #{ip}`
 			data = output.split
