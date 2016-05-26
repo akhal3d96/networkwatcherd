@@ -4,7 +4,7 @@ A Linux daemon sends you a notification when a new device is connected to your n
 
 ### Installation
 You should first have Ruby installed on your computer with Gem.
-* You can install it directly from [RubyGems](https://rubygems.org/)
+* You can install it directly from [RubyGems](https://rubygems.org/gems/networkwatcherd)
 ```sh
 $ gem install networkwatcherd
 ```
