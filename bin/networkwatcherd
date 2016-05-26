@@ -44,6 +44,6 @@ options[:devices] ||= 254
 S = Scanner.new(options[:devices].to_i)
 while true 
 	S.scan options[:ippattern],options[:sleep],options[:timeout]
-	sleep options[:sleep]
+	sleep options[:sleep].to_i
 end
 
