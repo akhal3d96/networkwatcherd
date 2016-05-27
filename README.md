@@ -28,4 +28,10 @@ You can add it to your startup applications.
 $ networkwatcherd -d 24 -t 10 &
 ```
 
+### TODO
 
+ - Add option ```-n [MESSAGE_HEADER] [OPTIONAL_ICON]``` to control the notifications behaviour.
+ - Make ```--no-daemon``` option to just run the application and retrive the current online IPs
+ - Get the devices OS type besides their IPs on the network *see [this](http://www.kellyodonnell.com/content/determining-os-type-ping)*
+ - Add function to write ```old_ip_list``` to a file to use it in further development as I want to make this application lighter and faster by calling it after a certaim time interval instead of making it run and sleep.
+ - Make Arch Linux and Debian/Ubuntu package (Snappy is ok.)
