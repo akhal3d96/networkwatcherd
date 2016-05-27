@@ -1,6 +1,6 @@
 # networkwatcherd
-A Linux daemon sends you a notification when a new device is connected to your network
-
+A small Linux daemon written in Ruby sends you a notification when a new device is connected to your network.
+It is not practical to call nmap every time just to see who is online on your network and it is not good to install a heavy application to just see who is online also most of this application doesn't notify you when someone new is online.
 
 ### Installation
 You should first have Ruby installed on your computer with Gem.
